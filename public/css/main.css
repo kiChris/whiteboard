@@ -2,10 +2,10 @@
     background-color: #808080; /* Green background */
     border: 1px solid #636060; /* Green border */
     color: black; /* White text */
-    padding: 11px 14px; /* Some padding */
+    width: 50px;
+    height: 50px;
     cursor: pointer; /* Pointer/hand icon */
-    float: left; /* Float the buttons side by side */
-     font-size: 1.2em;
+    font-size: 1em;
 }
 
 .btn-group button:not(:last-child) {
@@ -33,6 +33,8 @@ button {
     margin-left: 5px;
     float: left;
     position: relative;
+    height: 50px;
+    display: flex;
 }
 
 .whiteboardTool.active {
@@ -41,6 +43,8 @@ button {
 
 #whiteboardThicknessSlider {
     -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
     width: 100%;
     height: 10px;
     border-radius: 3px;
@@ -49,4 +53,10 @@ button {
     opacity: 1;
     -webkit-transition: opacity .15s ease-in-out;
     transition: opacity .15s ease-in-out;
+}
+
+#draw-settings {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
 }

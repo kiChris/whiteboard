@@ -9,13 +9,14 @@
 	<script type="text/javascript" src="./js/socketio2.0.4.min.js"></script>
 	<script type="text/javascript" src="./js/jqColorPicker.min.js"></script>
 
-	<script type="text/javascript" src="./js/whiteboard.js"></script>
-	<script type="text/javascript" src="./js/main.js"></script>
+    <script type="text/javascript" src="./js/whiteboard.js"></script>
+    <script type="text/javascript" src="./js/main.js"></script>
 
 	<!--- CSS References -!-->
-	<link rel="stylesheet" href="./css/jquery-ui.min.css">
-	<link href="./css/fontawesome-all.min.css" rel="stylesheet">
-	<link href="./css/main.css" rel="stylesheet">
+	<link rel="stylesheet" href="./css/jquery-ui.min.css" />
+	<link href="./css/fontawesome-all.min.css" rel="stylesheet" />
+	<link href="./css/main.css" rel="stylesheet" />
+    <link href="./css/whiteboard.css" rel="stylesheet" />
 	
 </head>
 <body style="position: relative; margin: 0px; height: 100vh; width: 100%; overflow: hidden;">
@@ -37,13 +38,16 @@
 			<button tool="mouse" title="Take the mouse" type="button" class="whiteboardTool">
 	            <i class="fa fa-mouse-pointer"></i>
 	        </button>
-	        <button style="padding-bottom: 11px;" tool="recSelect" title="Select an area" type="button" class="whiteboardTool">
+	        <button tool="recSelect" title="Select an area" type="button" class="whiteboardTool">
 	            <img src="./img/dottedRec.png">
+	        </button>
+            <button tool="moveImage" title="Move an image" type="button" class="whiteboardTool">
+	            !!!
 	        </button>
 	        <button tool="pen" title="Take the pen" type="button" class="whiteboardTool active">
 	            <i class="fa fa-pencil-alt"></i>
 	        </button>
-	        <button style="padding-bottom: 8px; padding-top: 7px;" tool="line" title="draw a line" type="button" class="whiteboardTool">
+	        <button tool="line" title="draw a line" type="button" class="whiteboardTool">
 	            ╱
 	        </button>
 	        <button tool="rect" title="draw a rectangle" type="button" class="whiteboardTool">
@@ -57,10 +61,10 @@
 	        </button>
 	    </div>
 
-		<div style="width: 190px;  height: 44px; border: 1px solid green;" class="btn-group">
-			<img style="position: absolute; left: 11px; top: 16px; height:14px; width:130px;" src="./img/slider-background.svg">
-	    	<input title="Thickness" id="whiteboardThicknessSlider" style="position: absolute; left:9px; width: 130px; top: 15px;" type="range" min="1" max="50" value="3">
-	    	<div  title="Colorpicker" style="position: absolute; left: 155px; top: 10px; width: 26px; height: 23px; border-radius: 3px; overflow: hidden; border: 1px solid darkgrey;">
+		<div style="width: 190px; " class="btn-group" id="draw-settings">
+			<img style="position: absolute; left: 11px; height:14px; width:70%" src="./img/slider-background.svg">
+	    	<input title="Thickness" id="whiteboardThicknessSlider" style="position: absolute; width: 70%" type="range" min="1" max="50" value="3">
+	    	<div  title="Colorpicker" style="position: absolute; left: 80%; width: 26px; height: 23px; overflow: hidden; border: 1px solid darkgrey;">
                 <div id="whiteboardColorpicker" value="#000000" style="width: 40px; height: 35px; border: 0px; padding: 0px; position: relative; top: 0px; left: -5px;"></div>
             </div>
 		</div>

@@ -44,7 +44,7 @@ app.post('/upload', function(req, res) { //File upload
         //End file upload
     });
     form.parse(req);
-});
+}); 
 
 function progressUploadFormData(formData) {
     console.log("Progress new Form Data");
@@ -72,18 +72,22 @@ function progressUploadFormData(formData) {
 
 var allUsers = {};
 io.on('connection', function(socket){
-
+    // one member less
     socket.on('disconnect', function () {
         delete allUsers[socket.id];
         socket.broadcast.emit('refreshUserBadges', null);
     });
 
+    // generally any action related to drawing from users
     socket.on('drawToWhiteboard', function(content) {
         content = escapeAllContentStrings(content);
-        sendToAllUsersOfWhiteboard(content["wid"], socket.id, content)
-        s_whiteboard.handleEventsAndData(content); //save whiteboardchanges on the server
+        // send changes to members on same whiteboard
+        sendToAllUsersOfWhiteboard(content["wid"], socket.id, content);
+        // send changes to storage
+        s_whiteboard.handleEventsAndData(content);
     });
 
+    // new member
     socket.on('joinWhiteboard', function(wid) {
         allUsers[socket.id] = {
             "socket" : socket,

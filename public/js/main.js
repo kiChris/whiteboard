@@ -1,7 +1,7 @@
 var whiteboardId = getQueryVariable("whiteboardid");
 whiteboardId = whiteboardId || "myNewWhiteboard";
 var myUsername = getQueryVariable("username");
-myUsername = myUsername || "unkonwn"+(Math.random()+"").substring(2,6);
+myUsername = myUsername || "unknown"+(Math.random()+"").substring(2,6);
 
 var url = document.URL.substr(0,document.URL.lastIndexOf('/'));
 var signaling_socket = null;
@@ -48,7 +48,9 @@ $(document).ready(function() {
     /----------------*/
 
     $("#whiteboardTrashBtn").click(function() {
-    	whiteboard.clearWhiteboard();
+        if (confirm("Are you sure you want to clear the whiteboard?")) {
+            whiteboard.clearWhiteboard();
+        }
     });
 
     $("#whiteboardUndoBtn").click(function() {
@@ -187,6 +189,32 @@ $(document).ready(function() {
     	}
     });
 });
+
+// Set the name of the hidden property and the change event for visibility
+var hidden, visibilityChange; 
+if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support 
+  hidden = "hidden";
+  visibilityChange = "visibilitychange";
+} else if (typeof document.msHidden !== "undefined") {
+  hidden = "msHidden";
+  visibilityChange = "msvisibilitychange";
+} else if (typeof document.webkitHidden !== "undefined") {
+  hidden = "webkitHidden";
+  visibilityChange = "webkitvisibilitychange";
+}
+
+function handleVisibilityChange() {
+  if (!document[hidden]) {
+    whiteboard.loadData(whiteboard.drawBuffer);
+  }
+}
+
+if (typeof document.addEventListener === "undefined" || hidden === undefined) {
+  console.log("This demo requires a browser, such as Google Chrome or Firefox, that supports the Page Visibility API.");
+} else {
+  // Handle page visibility change   
+  document.addEventListener(visibilityChange, handleVisibilityChange, false);
+}
 
 //Prevent site from changing tab on drag&drop
 window.addEventListener("dragover",function(e){

@@ -3,37 +3,66 @@
 var savedBoards = {};
 module.exports = {
 	handleEventsAndData : function(content) {
-		var tool = content["t"]; //Tool witch is used
-		var wid = content["wid"]; //whiteboard ID
+        // determine used tool
+		var tool = content["t"];
+        
+        // determine whiteboard ID
+		var whiteBoardID = content["wid"];
+        
+        // get username
 		var username = content["username"];
-		if(tool==="clear") { //Clear the whiteboard
-			delete savedBoards[wid];
-		} else if(tool==="undo") { //Undo an action
-			if(savedBoards[wid]) {
-				for(var i=savedBoards[wid].length-1;i>=0;i--){
-					if(savedBoards[wid][i]["username"]==username) {
-						var drawId = savedBoards[wid][i]["drawId"];
-						for(var i=savedBoards[wid].length-1;i>=0;i--){
-							if(savedBoards[wid][i]["drawId"]==drawId && savedBoards[wid][i]["username"]==username) {
-								savedBoards[wid].splice(i, 1);
-							}
-						}
-						break;
-					}
-				}
-			}
-		} else if(tool==="line" || tool==="pen" || tool==="rect" || tool==="circle" || tool==="eraser" || tool==="addImgBG" || tool==="recSelect" || tool==="eraseRec") { //Save all this actions
-			if(!savedBoards[wid]) {
-				savedBoards[wid] = [];
+        
+        // clear the whiteboard
+		if (tool==="clear") {
+			delete savedBoards[whiteBoardID];
+        }
+        // undo an action
+        else if(tool==="undo") {
+			if(!savedBoards[whiteBoardID]) {
+                return;
+            }
+            
+            var drawId = content.i;
+            
+            // find last drawn item id if necessary
+            if (drawId == -1) {
+                var lastIndexOfUser = -1;
+                for(var i = savedBoards[whiteBoardID].length-1; i >= 0; i--) {
+                    if(savedBoards[whiteBoardID][i].username == username) {
+                        lastIndexOfUser = i;
+                        break;
+                    }
+                }
+                
+                if (lastIndexOfUser == -1) {
+                    return;
+                }
+                
+                drawId = savedBoards[whiteBoardID][lastIndexOfUser]["drawId"];
+            }
+            
+            // remove elements
+            for(i = savedBoards[whiteBoardID].length-1; i>=0; i--) {
+                if(savedBoards[whiteBoardID][i]["drawId"] == drawId && savedBoards[whiteBoardID][i]["username"] == username) {
+                     savedBoards[whiteBoardID].splice(i, 1);
+                }
+            }
+		}
+        // save new action
+        else if(tool==="line" || tool==="pen" || tool==="rect" || tool==="circle" || tool==="eraser" || tool==="addImgBG" || tool==="recSelect" || tool==="eraseRec") {
+			if(!savedBoards[whiteBoardID]) {
+				savedBoards[whiteBoardID] = [];
 			}
 			delete content["wid"]; //Delete id from content so we don't store it twice
-			savedBoards[wid].push(content);
+			savedBoards[whiteBoardID].push(content);
 		}
 	},
-	loadStoredData : function(wid) { //Load saved whiteboard
-		if(!savedBoards[wid]) {
+    // load a saved board
+	loadStoredData : function(whiteBoardID) {
+        // return empty board if it doesn't exist
+		if(!savedBoards[whiteBoardID]) {
 			return [];
 		}
-		return savedBoards[wid];
+		return savedBoards[whiteBoardID];
 	}
 }
