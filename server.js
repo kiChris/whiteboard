@@ -10,41 +10,41 @@ app.use(express.static(__dirname + '/public'));
 var server = require('http').Server(app);
 server.listen(PORT);
 var io = require('socket.io')(server);
-console.log("Webserver & socketserver running on port:"+PORT);
+console.log("Webserver & socketserver running on port:" + PORT);
 
-app.get('/loadwhiteboard', function(req, res) {
+app.get('/loadwhiteboard', function (req, res) {
     var wid = req["query"]["wid"];
     var ret = s_whiteboard.loadStoredData(wid);
     res.send(ret);
     res.end();
 });
 
-app.post('/upload', function(req, res) { //File upload
+app.post('/upload', function (req, res) { //File upload
     var form = new formidable.IncomingForm(); //Receive form
     var formData = {
-        files : {},
-        fields : {}
+        files: {},
+        fields: {}
     }
 
-    form.on('file', function(name, file) {
-        formData["files"][file.name] = file;      
+    form.on('file', function (name, file) {
+        formData["files"][file.name] = file;
     });
 
-    form.on('field', function(name, value) {
+    form.on('field', function (name, value) {
         formData["fields"][name] = value;
     });
 
-    form.on('error', function(err) {
-      console.log('File uplaod Error!');
+    form.on('error', function (err) {
+        console.log('File uplaod Error!');
     });
 
-    form.on('end', function() {
+    form.on('end', function () {
         progressUploadFormData(formData);
         res.send("done");
         //End file upload
     });
     form.parse(req);
-}); 
+});
 
 function progressUploadFormData(formData) {
     console.log("Progress new Form Data");
@@ -54,15 +54,15 @@ function progressUploadFormData(formData) {
 
     var name = fields["name"] || "";
     var date = fields["date"] || (+new Date());
-    var filename = whiteboardId+"_"+date+".png";
+    var filename = whiteboardId + "_" + date + ".png";
 
-    fs.ensureDir("./public/uploads", function(err) {
+    fs.ensureDir("./public/uploads", function (err) {
         var imagedata = fields["imagedata"];
-        if(imagedata && imagedata != "") { //Save from base64
+        if (imagedata && imagedata != "") { //Save from base64
             imagedata = imagedata.replace(/^data:image\/png;base64,/, "").replace(/^data:image\/jpeg;base64,/, "");
             console.log(filename, "uploaded");
-            fs.writeFile('./public/uploads/'+filename, imagedata, 'base64', function(err) {
-                if(err) {
+            fs.writeFile('./public/uploads/' + filename, imagedata, 'base64', function (err) {
+                if (err) {
                     console.log("error", err);
                 }
             });
@@ -71,7 +71,7 @@ function progressUploadFormData(formData) {
 }
 
 var allUsers = {};
-io.on('connection', function(socket){
+io.on('connection', function (socket) {
     // one member less
     socket.on('disconnect', function () {
         delete allUsers[socket.id];
@@ -79,7 +79,7 @@ io.on('connection', function(socket){
     });
 
     // generally any action related to drawing from users
-    socket.on('drawToWhiteboard', function(content) {
+    socket.on('drawToWhiteboard', function (content) {
         content = escapeAllContentStrings(content);
         // send changes to members on same whiteboard
         sendToAllUsersOfWhiteboard(content["wid"], socket.id, content);
@@ -88,17 +88,17 @@ io.on('connection', function(socket){
     });
 
     // new member
-    socket.on('joinWhiteboard', function(wid) {
+    socket.on('joinWhiteboard', function (wid) {
         allUsers[socket.id] = {
-            "socket" : socket,
-            "wid" : wid
+            "socket": socket,
+            "wid": wid
         };
     });
 });
 
 function sendToAllUsersOfWhiteboard(wid, ownSocketId, content) {
-    for(var i in allUsers) {
-        if(allUsers[i]["wid"]===wid && allUsers[i]["socket"].id !== ownSocketId) {
+    for (var i in allUsers) {
+        if (allUsers[i]["wid"] === wid && allUsers[i]["socket"].id !== ownSocketId) {
             allUsers[i]["socket"].emit('drawToWhiteboard', content);
         }
     }
@@ -106,16 +106,17 @@ function sendToAllUsersOfWhiteboard(wid, ownSocketId, content) {
 
 //Prevent cross site scripting
 function escapeAllContentStrings(content, cnt) {
-    if(!cnt)
+    if (!cnt)
         cnt = 0;
 
-    if(typeof(content)=="string") {
+    if (typeof (content) == "string") {
         return content.replace(/<\/?[^>]+(>|$)/g, "");
     }
-    for(var i in content) {
-        if(typeof(content[i])=="string") {
+    for (var i in content) {
+        if (typeof (content[i]) == "string") {
             content[i] = content[i].replace(/<\/?[^>]+(>|$)/g, "");
-        } if(typeof(content[i])=="object" && cnt < 10) {
+        }
+        if (typeof (content[i]) == "object" && cnt < 10) {
             content[i] = escapeAllContentStrings(content[i], ++cnt);
         }
     }
