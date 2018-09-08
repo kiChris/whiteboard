@@ -107,7 +107,9 @@ var whiteboard = {
 
 						// 'undo' old image, add new one
 						_this.undoWhiteboardClick(_this.imageBoxes[i].drawId);
-						_this.addImgToCanvasByUrl(_this.imageBoxes[i].url, _this.imageBoxes[i].left, _this.imageBoxes[i].top);
+                        var width = _this.imageBoxes[i].right - _this.imageBoxes[i].left;
+                        var height = _this.imageBoxes[i].bottom - _this.imageBoxes[i].top;
+						_this.addImgToCanvasByUrl(_this.imageBoxes[i].url, _this.imageBoxes[i].left, _this.imageBoxes[i].top, width, height);
 
 						// delete bounding box
 						_this.imageBoxes.splice(i, 1);
@@ -591,39 +593,59 @@ var whiteboard = {
 		_this.imageBoxes = [];
 	},
 	// upload/add image
-	addImgToCanvasByUrl: function (url, x, y) {
+	addImgToCanvasByUrl: function (url, x, y, w, h) {
 		var _this = this;
 		_this.imgDragActive = true;
+        
+        // set default coordinates if necessary
 		if (!x) {
 			x = 200;
 		}
 		if (!y) {
 			y = 200;
 		}
+        
+        var widthTag = "", heightTag = "";
+        if (w) {
+            widthTag = ";width:" + w + "px";
+        }
+        if (h) {
+            heightTag = ";height:" + h + "px";
+        }
+        
+        // reset cursor style
 		_this.mouseOverlay.css({
 			"cursor": "default"
 		});
-		var imgDiv = $('<div class="imageMover" style="left:' + x + 'px;top:' + y + 'px">' +
-			'<img style="width: 100%; height: 100%;" src="' + url + '"/>' +
-			'<div id="imageMoverButtons">' +
-			'<button draw="1" class="addToCanvasBtn imageMoverButton">✓</button> ' +
-			'<button draw="0" class="addToCanvasBtn imageMoverButton">BG</button> ' +
-			'<button class="xCanvasBtn btn btn-default imageMoverButton">x</button>' +
+        
+        // add uploader-div
+        // remove 2 to adjust for border
+		var imgDiv = $('<div class="imageMover" style="left:' + (x-2) + 'px;top:' + (y-2) + 'px' + widthTag + heightTag + '">' +
+			'<img id="img-mover-img" src="' + url + '"/>' +
+			'<div id="img-mover-btns">' +
+			'<button class="js-add-btn img-mover-btn" draw="1">✓</button>' +
+			'<button class="js-add-btn img-mover-btn" draw="0">BG</button>' +
+			'<button class="js-close-btn img-mover-btn">❌</button>' +
 			'</div>' +
 			'<i style="position:absolute; bottom: -4px; right: 2px; font-size: 2em; color: gray; transform: rotate(-45deg);" class="fas fa-sort-down" aria-hidden="true"></i>' +
 			'</div>');
 		// cancel button
-		imgDiv.find(".xCanvasBtn").click(function () {
+		imgDiv.find(".js-close-btn").click(function () {
 			_this.imgDragActive = false;
 			if (_this.tool === "pen") {
+                // disable cursor
 				_this.mouseOverlay.css({
 					"cursor": "none"
 				});
-			} else if (_this.tool === "mouse") {
+			}
+            else if (_this.tool === "mouse") {
+                // regular mouse to show other people
 				_this.mouseOverlay.css({
 					"cursor": "auto"
 				});
-			} else {
+			}
+            else {
+                // use crosshair for other tools
 				_this.mouseOverlay.css({
 					"cursor": "crosshair"
 				});
@@ -631,7 +653,7 @@ var whiteboard = {
 			imgDiv.remove();
 		});
 		// add-buttons
-		imgDiv.find(".addToCanvasBtn").click(function () {
+		imgDiv.find(".js-add-btn").click(function () {
 			var draw = $(this).attr("draw");
 			_this.imgDragActive = false;
 			if (_this.tool === "pen") {
@@ -650,8 +672,9 @@ var whiteboard = {
 			var width = imgDiv.width();
 			var height = imgDiv.height();
 			var p = imgDiv.position();
-			var left = Math.round(p.left * 100) / 100;
-			var top = Math.round(p.top * 100) / 100;
+            // add 2 to adjust for border
+			var left = Math.round(p.left * 100) / 100 + 2;
+			var top = Math.round(p.top * 100) / 100 + 2;
 			// add to canvas
 			if (draw == "1") {
 				_this.drawImgToCanvas(url, width, height, left, top);

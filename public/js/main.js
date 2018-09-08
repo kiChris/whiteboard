@@ -32,6 +32,7 @@ signaling_socket.on('connect', function () {
     signaling_socket.emit('joinWhiteboard', whiteboardId);
 });
 
+// once page is loaded
 $(document).ready(function () {
     whiteboard.loadWhiteboard("#whiteboardContainer", { //Load the whiteboard
         whiteboardId: whiteboardId,
@@ -41,6 +42,7 @@ $(document).ready(function () {
         }
     });
 
+    // request whiteboard from server
     $.get(subdir + "/loadwhiteboard", {
         wid: whiteboardId
     }).done(function (data) {
@@ -51,26 +53,31 @@ $(document).ready(function () {
 	Whiteboard actions
     /----------------*/
 
+    // whiteboard clear button
     $("#whiteboardTrashBtn").click(function () {
         if (confirm("Are you sure you want to clear the whiteboard?")) {
             whiteboard.clearWhiteboard();
         }
     });
 
+    // undo button
     $("#whiteboardUndoBtn").click(function () {
         whiteboard.undoWhiteboardClick();
     });
 
+    // switch tool
     $(".whiteboardTool").click(function () {
         $(".whiteboardTool").removeClass("active");
         $(this).addClass("active");
         whiteboard.setTool($(this).attr("tool"));
     });
 
+    // upload image button
     $("#addImgToCanvasBtn").click(function () {
-        alert("Just drag and drop images in!");
+        alert("Please drag the image into the browser.");
     });
 
+    // save image to png
     $("#saveAsImageBtn").click(function () {
         var imgData = whiteboard.getImageDataBase64();
         var a = document.createElement('a');
@@ -81,6 +88,7 @@ $(document).ready(function () {
         document.body.removeChild(a);
     });
 
+    // save image to json containing steps
     $("#saveAsJSONBtn").click(function () {
         var imgData = whiteboard.getImageDataJson();
         var a = window.document.createElement('a');
@@ -95,10 +103,12 @@ $(document).ready(function () {
         document.body.removeChild(a);
     });
 
+    // upload json containing steps
     $("#uploadJsonBtn").click(function () {
         $("#myFile").click();
     });
 
+    // load json locally
     $("#myFile").on("change", function () {
         var file = document.getElementById("myFile").files[0];
         var reader = new FileReader();
@@ -106,14 +116,16 @@ $(document).ready(function () {
             try {
                 var j = JSON.parse(e.target.result);
                 whiteboard.loadJsonData(j);
-            } catch (e) {
-                alert("File was not a valid JSON!");
+            }
+            catch (e) {
+                alert("File is not a valid JSON!");
             }
         };
         reader.readAsText(file);
         $(this).val("");
     });
 
+    // handle drag&drop
     var dragCounter = 0;
     $('#whiteboardContainer').on("dragenter", function (e) {
         e.preventDefault();
@@ -135,9 +147,10 @@ $(document).ready(function () {
         whiteboard.thickness = $(this).val();
     });
 
-    $('#whiteboardContainer').on('drop', function (e) { //Handle drag & drop
+    $('#whiteboardContainer').on('drop', function (e) {
         if (e.originalEvent.dataTransfer) {
-            if (e.originalEvent.dataTransfer.files.length) { //File from harddisc
+            // local file
+            if (e.originalEvent.dataTransfer.files.length) {
                 e.preventDefault();
                 e.stopPropagation();
 
@@ -154,7 +167,9 @@ $(document).ready(function () {
                 } else {
                     console.error("File must be an image!");
                 }
-            } else { //File from other browser
+            }
+            // file url
+            else {
                 var fileUrl = e.originalEvent.dataTransfer.getData('URL');
                 var imageUrl = e.originalEvent.dataTransfer.getData('text/html');
                 var rex = /src="?([^"\s]+)"?\s*/;
@@ -167,18 +182,24 @@ $(document).ready(function () {
 
                 isValidImageUrl(fileUrl, function (isImage) {
                     if (isImage && isImageFileName(url)) {
+                        // add image from direct url
                         whiteboard.addImgToCanvasByUrl(fileUrl);
-                    } else {
+                    }
+                    else {
                         isValidImageUrl(url, function (isImage) {
                             if (isImage) {
                                 if (isImageFileName(url)) {
+                                    // add first image on page from url
                                     whiteboard.addImgToCanvasByUrl(url);
-                                } else {
+                                }
+                                else {
+                                    // add some image
                                     var blob = items[i].getAsFile();
                                     uploadImgAndAddToWhiteboard(url);
                                 }
-                            } else {
-                                console.error("Can only upload imagedata!");
+                            }
+                            else {
+                                console.error("Only images can be uploaded");
                             }
                         });
                     }
@@ -195,32 +216,6 @@ $(document).ready(function () {
         }
     });
 });
-
-// Set the name of the hidden property and the change event for visibility
-var hidden, visibilityChange;
-if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support 
-    hidden = "hidden";
-    visibilityChange = "visibilitychange";
-} else if (typeof document.msHidden !== "undefined") {
-    hidden = "msHidden";
-    visibilityChange = "msvisibilitychange";
-} else if (typeof document.webkitHidden !== "undefined") {
-    hidden = "webkitHidden";
-    visibilityChange = "webkitvisibilitychange";
-}
-
-function handleVisibilityChange() {
-    if (!document[hidden]) {
-        whiteboard.loadData(whiteboard.drawBuffer);
-    }
-}
-
-if (typeof document.addEventListener === "undefined" || hidden === undefined) {
-    console.log("This demo requires a browser, such as Google Chrome or Firefox, that supports the Page Visibility API.");
-} else {
-    // Handle page visibility change   
-    document.addEventListener(visibilityChange, handleVisibilityChange, false);
-}
 
 //Prevent site from changing tab on drag&drop
 window.addEventListener("dragover", function (e) {
@@ -253,15 +248,18 @@ function uploadImgAndAddToWhiteboard(base64data) {
     });
 }
 
+// verify if filename refers to an image
 function isImageFileName(filename) {
-    var ending = filename.split(".")[filename.split(".").length - 1];
-    if (ending.toLowerCase() == "png" || ending.toLowerCase() == "jpg" || ending.toLowerCase() == "jpeg" || ending.toLowerCase() == "gif" || ending.toLowerCase() == "tiff") {
+    var extension = filename.split(".")[filename.split(".").length - 1];
+    var known_extensions = ["png", "jpg", "jpeg", "gif", "tiff"];
+    if (known_extensions.includes(extension.toLowerCase())) {
         return true;
     }
     return false;
 }
 
-function isValidImageUrl(url, callback) { //Check if given url it is a vaild img url
+// verify if given url is url to an image
+function isValidImageUrl(url, callback) {
     var img = new Image();
     var timer = null;
     img.onerror = img.onabort = function () {
@@ -278,7 +276,8 @@ function isValidImageUrl(url, callback) { //Check if given url it is a vaild img
     img.src = url;
 }
 
-window.addEventListener("paste", function (e) { //Even do copy & paste from clipboard
+// handle pasting from clipboard
+window.addEventListener("paste", function (e) {
     if (e.clipboardData) {
         var items = e.clipboardData.items;
         if (items) {
@@ -301,6 +300,7 @@ window.addEventListener("paste", function (e) { //Even do copy & paste from clip
     }
 });
 
+// get 'GET' parameter by variable name
 function getQueryVariable(variable) {
     var query = window.location.search.substring(1);
     var vars = query.split("&");
