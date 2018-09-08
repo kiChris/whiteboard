@@ -1,15 +1,20 @@
 .btn-group button {
-    background-color: #808080; /* Green background */
-    border: 1px solid #636060; /* Green border */
-    color: black; /* White text */
+    background-color: #808080;
+    /* Green background */
+    border: 1px solid #636060;
+    /* Green border */
+    color: black;
+    /* White text */
     width: 50px;
     height: 50px;
-    cursor: pointer; /* Pointer/hand icon */
+    cursor: pointer;
+    /* Pointer/hand icon */
     font-size: 1em;
 }
 
 .btn-group button:not(:last-child) {
-    border-right: none; /* Prevent double borders */
+    border-right: none;
+    /* Prevent double borders */
 }
 
 /* Clear floats (clearfix hack) */
