@@ -20,7 +20,8 @@
     "express": "*",
     "formidable": "*",
     "fs-extra": "*",
-    "socket.io": "2.*"
+    "socket.io": "2.*",
+    "uuid": "^3.3.2"
   },
   "author": "Cracker0dks",
   "license": "MIT"

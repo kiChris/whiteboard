@@ -1,4 +1,4 @@
-.imageMover {
+.image-mover {
     border: 2px dashed gray;
     position: absolute;
     min-width: 32px;
@@ -26,3 +26,73 @@
     width: 100%;
     display: flex;
 }
+
+.btn-group button {
+    background-color: #808080;
+    /* Green background */
+    border: 1px solid #636060;
+    /* Green border */
+    color: black;
+    /* White text */
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    /* Pointer/hand icon */
+    font-size: 1em;
+}
+
+.btn-group button:not(:last-child) {
+    border-right: none;
+    /* Prevent double borders */
+}
+
+/* Clear floats (clearfix hack) */
+.btn-group:after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+/* Add a background color on hover */
+.btn-group button:hover {
+    background-color: #a5a3a3;
+}
+
+button {
+    outline-width: 0;
+}
+
+.btn-group {
+    background-color: #808080;
+    margin-left: 5px;
+	margin-bottom: 5px;
+    float: left;
+    position: relative;
+    height: 50px;
+    display: flex;
+}
+
+.whiteboardTool.active {
+    background: #bfbfbf;
+}
+
+#whiteboardThicknessSlider {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 10px;
+    border-radius: 3px;
+    background: transparent;
+    outline: none;
+    opacity: 1;
+    -webkit-transition: opacity .15s ease-in-out;
+    transition: opacity .15s ease-in-out;
+}
+
+#draw-settings {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+

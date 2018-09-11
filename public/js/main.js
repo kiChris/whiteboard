@@ -231,6 +231,7 @@ function uploadImgAndAddToWhiteboard(base64data) {
     var date = (+new Date());
     $.ajax({
         type: 'POST',
+		dataType: 'json',
         url: document.URL.substr(0, document.URL.lastIndexOf('/')) + '/upload',
         data: {
             'imagedata': base64data,
@@ -238,7 +239,7 @@ function uploadImgAndAddToWhiteboard(base64data) {
             'date': date
         },
         success: function (msg) {
-            var filename = whiteboardId + "_" + date + ".png";
+            var filename = msg["filename"];
             whiteboard.addImgToCanvasByUrl(document.URL.substr(0, document.URL.lastIndexOf('/')) + "/uploads/" + filename); //Add image to canvas
             console.log("Image uploaded!");
         },

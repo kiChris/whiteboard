@@ -620,7 +620,7 @@ var whiteboard = {
         
         // add uploader-div
         // remove 2 to adjust for border
-		var imgDiv = $('<div class="imageMover" style="left:' + (x-2) + 'px;top:' + (y-2) + 'px' + widthTag + heightTag + '">' +
+		var imgDiv = $('<div class="image-mover" style="left:' + (x-2) + 'px;top:' + (y-2) + 'px' + widthTag + heightTag + '">' +
 			'<img id="img-mover-img" src="' + url + '"/>' +
 			'<div id="img-mover-btns">' +
 			'<button class="js-add-btn img-mover-btn" draw="1">✓</button>' +
