@@ -92,12 +92,12 @@ var whiteboard = {
 		_this.elements.mouseOverlay = $('<div id="mouse-overlay" class="top-left fill"></div>');
 
 		$(whiteboardContainer).append(_this.elements.backgroundGrid)
-		.append(_this.elements.imgContainer)
-		.append(_this.elements.canvas)
-		.append(_this.elements.svgContainer)
-		.append(_this.dropIndicator)
-		.append(_this.elements.cursorContainer)
-		.append(_this.elements.mouseOverlay);
+			.append(_this.elements.imgContainer)
+			.append(_this.elements.canvas)
+			.append(_this.elements.svgContainer)
+			.append(_this.dropIndicator)
+			.append(_this.elements.cursorContainer)
+			.append(_this.elements.mouseOverlay);
 		this.canvas = $("#whiteboard-canvas")[0];
 		this.canvas.height = _this.settings.canvasHeight;
 		this.canvas.width = _this.settings.canvasWidth;
@@ -374,12 +374,12 @@ var whiteboard = {
 					"cursor": "default"
 				});
 				var imgDiv = $('<div style="position:absolute; left:' + left + 'px; top:' + top + 'px; width:' + width + 'px; border: 2px dotted gray; overflow: hidden; height:' + height + 'px;" cursor:move;">' +
-						'<canvas style="cursor:move; position:absolute; top:0px; left:0px;" width="' + width + '" height="' + height + '"/>' +
-						'<div style="position:absolute; right:5px; top:3px;">' +
-						'<button draw="1" style="margin: 0px 0px; background: #03a9f4; padding: 5px; margin-top: 3px; color: white;" class="addToCanvasBtn btn btn-default">Drop</button> ' +
-						'<button style="margin: 0px 0px; background: #03a9f4; padding: 5px; margin-top: 3px; color: white;" class="xCanvasBtn btn btn-default">x</button>' +
-						'</div>' +
-						'</div>');
+					'<canvas style="cursor:move; position:absolute; top:0px; left:0px;" width="' + width + '" height="' + height + '"/>' +
+					'<div style="position:absolute; right:5px; top:3px;">' +
+					'<button draw="1" style="margin: 0px 0px; background: #03a9f4; padding: 5px; margin-top: 3px; color: white;" class="addToCanvasBtn btn btn-default">Drop</button> ' +
+					'<button style="margin: 0px 0px; background: #03a9f4; padding: 5px; margin-top: 3px; color: white;" class="xCanvasBtn btn btn-default">x</button>' +
+					'</div>' +
+					'</div>');
 				var dragCanvas = $(imgDiv).find("canvas");
 				var dragOutOverlay = $('<div class="dragOutOverlay" style="position:absolute; left:' + left + 'px; top:' + top + 'px; width:' + width + 'px; height:' + height + 'px; background:white;"></div>');
 				_this.elements.mouseOverlay.append(dragOutOverlay);
@@ -642,7 +642,7 @@ var whiteboard = {
 		}
 
 		var widthTag = "",
-		heightTag = "";
+			heightTag = "";
 		if (w) {
 			widthTag = ";width:" + w + "px";
 		}
@@ -658,14 +658,14 @@ var whiteboard = {
 		// add uploader-div
 		// remove 2 to adjust for border
 		var imgDiv = $('<div class="image-mover" style="left:' + (x - 2) + 'px;top:' + (y - 2) + 'px' + widthTag + heightTag + '">' +
-				'<img id="img-mover-img" src="' + url + '"/>' +
-				'<div id="img-mover-btns">' +
-				'<button class="js-add-btn img-mover-btn" draw="1">✓</button>' +
-				'<button class="js-add-btn img-mover-btn" draw="0">BG</button>' +
-				'<button class="js-close-btn img-mover-btn">❌</button>' +
-				'</div>' +
-				'<i id="scale-icon" class="fas fa-sort-down" aria-hidden="true"></i>' +
-				'</div>');
+			'<img id="img-mover-img" src="' + url + '"/>' +
+			'<div id="img-mover-btns">' +
+			'<button class="js-add-btn img-mover-btn" draw="1">✓</button>' +
+			'<button class="js-add-btn img-mover-btn" draw="0">BG</button>' +
+			'<button class="js-close-btn img-mover-btn">❌</button>' +
+			'</div>' +
+			'<i id="scale-icon" class="fas fa-sort-down" aria-hidden="true"></i>' +
+			'</div>');
 		// cancel button
 		imgDiv.find(".js-close-btn").click(function () {
 			_this.imgDragActive = false;
@@ -810,19 +810,19 @@ var whiteboard = {
 	setTool: function (tool) {
 		this.tool = tool;
 		if (tool === "pen" || tool === "eraser") {
-			this.mouseOverlay.css({
+			this.elements.mouseOverlay.css({
 				"cursor": "none"
 			});
 		} else if (tool === "mouse") {
-			this.mouseOverlay.css({
+			this.elements.mouseOverlay.css({
 				"cursor": "default"
 			});
 		} else {
-			this.mouseOverlay.css({
+			this.elements.mouseOverlay.css({
 				"cursor": "crosshair"
 			});
 		}
-		this.mouseOverlay.find(".xCanvasBtn").click();
+		this.elements.mouseOverlay.find(".xCanvasBtn").click();
 	},
 	// handle incoming data from file or server
 	handleEventsAndData: function (content, isNewData, doneCallback) {
@@ -891,8 +891,8 @@ var whiteboard = {
 	},
 	getImageDataBase64() {
 		_this = this;
-		var width = this.mouseOverlay.width();
-		var height = this.mouseOverlay.height();
+		var width = this.elements.mouseOverlay.width();
+		var height = this.elements.mouseOverlay.height();
 		var copyCanvas = document.createElement('canvas');
 		copyCanvas.width = width;
 		copyCanvas.height = height;
