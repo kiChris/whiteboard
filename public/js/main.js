@@ -1,52 +1,58 @@
+import * as whiteboard_ from "./whiteboard.js";
+
+// TODO: figure this import thing out
+let whiteboard = whiteboard_.whiteboard;
+
 var whiteboardId = getQueryVariable("whiteboardid");
 whiteboardId = whiteboardId || "myNewWhiteboard";
 var myUsername = getQueryVariable("username");
 myUsername = myUsername || "unknown" + (Math.random() + "").substring(2, 6);
 
-var url = document.URL.substr(0, document.URL.lastIndexOf('/'));
+var url = document.URL.substr(0, document.URL.lastIndexOf("/"));
 var signaling_socket = null;
 var urlSplit = url.split("/");
 var subdir = "";
 for (var i = 3; i < urlSplit.length; i++) {
-    subdir = subdir + '/' + urlSplit[i];
+    subdir = subdir + "/" + urlSplit[i];
 }
 if (subdir != "") {
     signaling_socket = io("", {
         "path": subdir + "/socket.io"
     }); //Connect even if we are in a subdir behind a reverse proxy
-} else {
+}
+else {
     signaling_socket = io();
 }
 
-signaling_socket.on('connect', function () {
+signaling_socket.on("connect", function() {
     console.log("Websocket connected!");
 
-    signaling_socket.on('drawToWhiteboard', function (content) {
+    signaling_socket.on("drawToWhiteboard", function(content) {
         whiteboard.handleEventsAndData(content, true);
     });
 
-    signaling_socket.on('refreshUserBadges', function () {
+    signaling_socket.on("refreshUserBadges", function() {
         whiteboard.refreshUserBadges();
     });
 
-    signaling_socket.emit('joinWhiteboard', whiteboardId);
+    signaling_socket.emit("joinWhiteboard", whiteboardId);
 });
 
 // once page is loaded
-$(document).ready(function () {
+$(document).ready(function() {
     whiteboard.loadWhiteboard("#whiteboardContainer", { //Load the whiteboard
         whiteboardId: whiteboardId,
         username: myUsername,
-        sendFunction: function (content) {
-            signaling_socket.emit('drawToWhiteboard', content);
+        sendFunction: function(content) {
+            signaling_socket.emit("drawToWhiteboard", content);
         }
     });
 
     // request whiteboard from server
     $.get(subdir + "/loadwhiteboard", {
         wid: whiteboardId
-    }).done(function (data) {
-        whiteboard.loadData(data)
+    }).done(function(data) {
+        whiteboard.loadData(data);
     });
 
     /*----------------/
@@ -54,48 +60,48 @@ $(document).ready(function () {
     /----------------*/
 
     // whiteboard clear button
-    $("#whiteboardTrashBtn").click(function () {
+    $("#whiteboardTrashBtn").click(function() {
         if (confirm("Are you sure you want to clear the whiteboard?")) {
             whiteboard.clearWhiteboard();
         }
     });
 
     // undo button
-    $("#whiteboardUndoBtn").click(function () {
+    $("#whiteboardUndoBtn").click(function() {
         whiteboard.undoWhiteboardClick();
     });
 
     // switch tool
-    $(".whiteboardTool").click(function () {
+    $(".whiteboardTool").click(function() {
         $(".whiteboardTool").removeClass("active");
         $(this).addClass("active");
         whiteboard.setTool($(this).attr("tool"));
     });
 
     // upload image button
-    $("#addImgToCanvasBtn").click(function () {
+    $("#addImgToCanvasBtn").click(function() {
         alert("Please drag the image into the browser.");
     });
 
     // save image to png
-    $("#saveAsImageBtn").click(function () {
+    $("#saveAsImageBtn").click(function() {
         var imgData = whiteboard.getImageDataBase64();
-        var a = document.createElement('a');
+        var a = document.createElement("a");
         a.href = imgData;
-        a.download = 'whiteboard.png';
+        a.download = "whiteboard.png";
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
     });
 
     // save image to json containing steps
-    $("#saveAsJSONBtn").click(function () {
+    $("#saveAsJSONBtn").click(function() {
         var imgData = whiteboard.getImageDataJson();
-        var a = window.document.createElement('a');
+        var a = window.document.createElement("a");
         a.href = window.URL.createObjectURL(new Blob([imgData], {
-            type: 'text/json'
+            type: "text/json"
         }));
-        a.download = 'whiteboard.json';
+        a.download = "whiteboard.json";
         // Append anchor to body.
         document.body.appendChild(a);
         a.click();
@@ -104,15 +110,15 @@ $(document).ready(function () {
     });
 
     // upload json containing steps
-    $("#uploadJsonBtn").click(function () {
+    $("#uploadJsonBtn").click(function() {
         $("#myFile").click();
     });
 
     // load json locally
-    $("#myFile").on("change", function () {
+    $("#myFile").on("change", function() {
         var file = document.getElementById("myFile").files[0];
         var reader = new FileReader();
-        reader.onload = function (e) {
+        reader.onload = function(e) {
             try {
                 var j = JSON.parse(e.target.result);
                 whiteboard.loadJsonData(j);
@@ -127,14 +133,14 @@ $(document).ready(function () {
 
     // handle drag&drop
     var dragCounter = 0;
-    $('#whiteboardContainer').on("dragenter", function (e) {
+    $("#whiteboardContainer").on("dragenter", function(e) {
         e.preventDefault();
         e.stopPropagation();
         dragCounter++;
         whiteboard.dropIndicator.show();
     });
 
-    $('#whiteboardContainer').on("dragleave", function (e) {
+    $("#whiteboardContainer").on("dragleave", function(e) {
         e.preventDefault();
         e.stopPropagation();
         dragCounter--;
@@ -143,11 +149,11 @@ $(document).ready(function () {
         }
     });
 
-    $("#whiteboardThicknessSlider").on("change", function () {
+    $("#whiteboardThicknessSlider").on("change", function() {
         whiteboard.thickness = $(this).val();
     });
 
-    $('#whiteboardContainer').on('drop', function (e) {
+    $("#whiteboardContainer").on("drop", function(e) {
         if (e.originalEvent.dataTransfer) {
             // local file
             if (e.originalEvent.dataTransfer.files.length) {
@@ -159,34 +165,36 @@ $(document).ready(function () {
                     var blob = e.originalEvent.dataTransfer.files[0];
                     var reader = new window.FileReader();
                     reader.readAsDataURL(blob);
-                    reader.onloadend = function () {
+                    reader.onloadend = function() {
                         console.log("Uploading image!");
-                        base64data = reader.result;
+                        let base64data = reader.result;
                         uploadImgAndAddToWhiteboard(base64data);
-                    }
-                } else {
+                    };
+                }
+                else {
                     console.error("File must be an image!");
                 }
             }
             // file url
             else {
-                var fileUrl = e.originalEvent.dataTransfer.getData('URL');
-                var imageUrl = e.originalEvent.dataTransfer.getData('text/html');
+                var fileUrl = e.originalEvent.dataTransfer.getData("URL");
+                var imageUrl = e.originalEvent.dataTransfer.getData("text/html");
                 var rex = /src="?([^"\s]+)"?\s*/;
                 var url = rex.exec(imageUrl);
                 if (url && url.length > 1) {
                     url = url[1];
-                } else {
+                }
+                else {
                     url = "";
                 }
 
-                isValidImageUrl(fileUrl, function (isImage) {
+                isValidImageUrl(fileUrl, function(isImage) {
                     if (isImage && isImageFileName(url)) {
                         // add image from direct url
                         whiteboard.addImgToCanvasByUrl(fileUrl);
                     }
                     else {
-                        isValidImageUrl(url, function (isImage) {
+                        isValidImageUrl(url, function(isImage) {
                             if (isImage) {
                                 if (isImageFileName(url)) {
                                     // add first image on page from url
@@ -194,7 +202,7 @@ $(document).ready(function () {
                                 }
                                 else {
                                     // add some image
-                                    var blob = items[i].getAsFile();
+                                    //var blob = items[i].getAsFile();
                                     uploadImgAndAddToWhiteboard(url);
                                 }
                             }
@@ -210,19 +218,19 @@ $(document).ready(function () {
         whiteboard.dropIndicator.hide();
     });
 
-    $('#whiteboardColorpicker').colorPicker({
-        renderCallback: function (elm) {
+    $("#whiteboardColorpicker").colorPicker({
+        renderCallback: function(elm) {
             whiteboard.drawcolor = elm.val();
         }
     });
 });
 
 //Prevent site from changing tab on drag&drop
-window.addEventListener("dragover", function (e) {
+window.addEventListener("dragover", function(e) {
     e = e || event;
     e.preventDefault();
 }, false);
-window.addEventListener("drop", function (e) {
+window.addEventListener("drop", function(e) {
     e = e || event;
     e.preventDefault();
 }, false);
@@ -230,20 +238,20 @@ window.addEventListener("drop", function (e) {
 function uploadImgAndAddToWhiteboard(base64data) {
     var date = (+new Date());
     $.ajax({
-        type: 'POST',
-		dataType: 'json',
-        url: document.URL.substr(0, document.URL.lastIndexOf('/')) + '/upload',
+        type: "POST",
+        dataType: "json",
+        url: document.URL.substr(0, document.URL.lastIndexOf("/")) + "/upload",
         data: {
-            'imagedata': base64data,
-            'whiteboardId': whiteboardId,
-            'date': date
+            "imagedata": base64data,
+            "whiteboardId": whiteboardId,
+            "date": date
         },
-        success: function (msg) {
+        success: function(msg) {
             var filename = msg["filename"];
-            whiteboard.addImgToCanvasByUrl(document.URL.substr(0, document.URL.lastIndexOf('/')) + "/uploads/" + filename); //Add image to canvas
+            whiteboard.addImgToCanvasByUrl(document.URL.substr(0, document.URL.lastIndexOf("/")) + "/uploads/" + filename); //Add image to canvas
             console.log("Image uploaded!");
         },
-        error: function (err) {
+        error: function(err) {
             console.error("Failed to upload frame: " + JSON.stringify(err));
         }
     });
@@ -263,22 +271,22 @@ function isImageFileName(filename) {
 function isValidImageUrl(url, callback) {
     var img = new Image();
     var timer = null;
-    img.onerror = img.onabort = function () {
+    img.onerror = img.onabort = function() {
         clearTimeout(timer);
         callback(false);
     };
-    img.onload = function () {
+    img.onload = function() {
         clearTimeout(timer);
         callback(true);
     };
-    timer = setTimeout(function () {
+    timer = setTimeout(function() {
         callback(false);
     }, 2000);
     img.src = url;
 }
 
 // handle pasting from clipboard
-window.addEventListener("paste", function (e) {
+window.addEventListener("paste", function(e) {
     if (e.clipboardData) {
         var items = e.clipboardData.items;
         if (items) {
@@ -290,18 +298,18 @@ window.addEventListener("paste", function (e) {
 
                     var reader = new window.FileReader();
                     reader.readAsDataURL(blob);
-                    reader.onloadend = function () {
+                    reader.onloadend = function() {
                         console.log("Uploading image!");
-                        base64data = reader.result;
+                        let base64data = reader.result;
                         uploadImgAndAddToWhiteboard(base64data);
-                    }
+                    };
                 }
             }
         }
     }
 });
 
-// get 'GET' parameter by variable name
+// get "GET" parameter by variable name
 function getQueryVariable(variable) {
     var query = window.location.search.substring(1);
     var vars = query.split("&");

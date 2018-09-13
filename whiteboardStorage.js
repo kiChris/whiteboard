@@ -1,14 +1,14 @@
 //This file is only for saving the whiteboard. (Not to a file, only to RAM atm. Whiteboard is gone after server restart)
 
-const uuidv4 = require('uuid/v4')
+var uuidv4 = require("uuid/v4");
 
 var savedBoards = {};
 var users = {};
 var uuids = {};
 
 module.exports = {
-	// handle user changes to board
-    handleUserAction: function (content) {
+    // handle user changes to board
+    handleUserAction: function(content) {
         // determine used tool
         var tool = content["t"];
 
@@ -17,8 +17,8 @@ module.exports = {
 
         // get username
         var username = content["username"];
-		
-		var allowed_tools = ["line", "pen", "rect", "circle", "eraser", "addImgBG", "recSelect", "eraseRec"];
+
+        var allowed_tools = ["line", "pen", "rect", "circle", "eraser", "addImgBG", "recSelect", "eraseRec"];
 
         // clear the whiteboard
         if (tool === "clear") {
@@ -68,40 +68,40 @@ module.exports = {
         }
     },
     // load a saved board
-    loadStoredData: function (whiteBoardID) {
+    loadStoredData: function(whiteBoardID) {
         // return empty board if it doesn't exist
         if (!savedBoards[whiteBoardID]) {
             return [];
         }
         return savedBoards[whiteBoardID];
     },
-	
-	haveUser: function (username) {
-		if (!users[username]) {
-			return false;
-		}
-		return true;
-	},
-	newUser: function (username) {
-		if (haveUser(username)) {
-			return null;
-		}
-		
-		// generate new UUID
-		uuid = uuidv4();
-		
-		// create local references
-		users[username].uuid = uuid;
-		users[username].username = username;
-		
-		uuids[uuid] = username;
-		
-		return uuid;
-	},
-	getUser: function(uuid) {
-		if (!uuids[uuid]) {
-			return null;
-		}
-		return users[uuids[uuid]];
-	}
-}
+
+    haveUser: function(username) {
+        if (!users[username]) {
+            return false;
+        }
+        return true;
+    },
+    newUser: function(username) {
+        if (this.haveUser(username)) {
+            return null;
+        }
+
+        // generate new UUID
+        let uuid = uuidv4();
+
+        // create local references
+        users[username].uuid = uuid;
+        users[username].username = username;
+
+        uuids[uuid] = username;
+
+        return uuid;
+    },
+    getUser: function(uuid) {
+        if (!uuids[uuid]) {
+            return null;
+        }
+        return users[uuids[uuid]];
+    }
+};
