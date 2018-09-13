@@ -65,7 +65,7 @@ button {
 .btn-group {
     background-color: #808080;
     margin-left: 5px;
-	margin-bottom: 5px;
+    margin-bottom: 5px;
     float: left;
     position: relative;
     height: 50px;
@@ -96,3 +96,43 @@ button {
     flex-direction: column;
 }
 
+.top-left {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+.fill {
+    height: 100%;
+    width: 100%;
+}
+
+#background-grid {
+    opacity: 0.2;
+}
+
+#whiteboard-canvas {
+    cursor: crosshair;
+}
+
+#drag-and-drop {
+    border: 7px dashed gray;
+    color: gray;
+    font-size: 23em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+#mouse-overlay {
+    cursor: none;
+}
+
+#scale-icon {
+    position: absolute;
+    bottom: -4px;
+	right: 2px;
+	font-size: 2em;
+	color: gray;
+	transform: rotate(-45deg);
+}
