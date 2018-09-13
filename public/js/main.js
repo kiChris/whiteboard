@@ -40,7 +40,8 @@ signaling_socket.on("connect", function() {
 
 // once page is loaded
 $(document).ready(function() {
-    whiteboard.loadWhiteboard("#whiteboardContainer", { //Load the whiteboard
+    // load the whiteboard
+    whiteboard.loadWhiteboard("#whiteboardContainer", {
         whiteboardId: whiteboardId,
         username: myUsername,
         sendFunction: function(content) {
