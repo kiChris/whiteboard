@@ -90,6 +90,12 @@ button {
     transition: opacity .15s ease-in-out;
 }
 
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 #draw-settings {
     display: flex;
     justify-content: center;
