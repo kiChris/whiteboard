@@ -33,7 +33,7 @@ var whiteboard = {
 		// svg containing previews
 		svgContainer: null,
 		// mouse overlay (TODO)
-		mouseOverlay: null
+		mouseOverlay: null,
 		// own cursor highlighter
 		ownCursor: null,
 	},
@@ -101,8 +101,8 @@ var whiteboard = {
 		this.canvas = $("#whiteboard-canvas")[0];
 		this.canvas.height = _this.settings.canvasHeight;
 		this.canvas.width = _this.settings.canvasWidth;
-		this.ctx = this.canvas.getContext("2d");
-		this.oldGCO = this.ctx.globalCompositeOperation;
+		this.context = this.canvas.getContext("2d");
+		this.oldGCO = this.context.globalCompositeOperation;
 
 		// On mouse down
 		$(_this.elements.mouseOverlay).on("mousedown touchstart", function (e) {
@@ -555,7 +555,7 @@ var whiteboard = {
 		var tempCanvasContext = tempCanvas.getContext('2d');
 		tempCanvasContext.drawImage(this.canvas, xf, yf, width, height, 0, 0, width, height);
 		this.eraseRec(xf, yf, width, height);
-		this.ctx.drawImage(tempCanvas, xt, yt);
+		this.context.drawImage(tempCanvas, xt, yt);
 	},
 	// clear rectangle
 	eraseRec: function (fromX, fromY, width, height) {
