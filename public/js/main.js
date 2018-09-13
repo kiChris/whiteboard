@@ -5,8 +5,6 @@ let whiteboard = whiteboard_.whiteboard;
 
 var whiteboardId = getQueryVariable("whiteboardid");
 whiteboardId = whiteboardId || "myNewWhiteboard";
-var myUsername = getQueryVariable("username");
-myUsername = myUsername || "unknown" + (Math.random() + "").substring(2, 6);
 
 var url = document.URL.substr(0, document.URL.lastIndexOf("/"));
 var signaling_socket = null;
@@ -40,10 +38,15 @@ signaling_socket.on("connect", function() {
 
 // once page is loaded
 $(document).ready(function() {
+    // if user is not logged in, redirect to login
+    if (!Cookies.get("whiteboard-username") || !Cookies.get("whiteboard-uuid")) {
+        window.location.replace("/");
+    }
+
     // load the whiteboard
     whiteboard.loadWhiteboard("#whiteboardContainer", {
         whiteboardId: whiteboardId,
-        username: myUsername,
+        username: Cookies.get("whiteboard-username"),
         sendFunction: function(content) {
             signaling_socket.emit("drawToWhiteboard", content);
         }

@@ -117,21 +117,43 @@ function processUser(formData, response) {
     switch (request) {
         case "new-user":
             if (!username) {
-                response.status(400).send("No user given");
+                response.send({
+                    response: "no-user-given"
+                });
                 return;
             }
             var newUUID = whiteboardStorage.newUser(username);
+            if (!newUUID) {
+                response.send({
+                    response: "already-exists"
+                });
+                return;
+            }
             response.send({
-                uuid: newUUID
+                response: "new-user",
+                uuid: newUUID,
+                username: username
             });
             break;
 
         case "auth":
             if (!uuid) {
-                response.status(400).send("No uuid given");
+                response.send({
+                    response: "no-uuid-given"
+                });
                 return;
             }
-            response.send(whiteboardStorage.getUser(uuid));
+            if (!whiteboardStorage.getUser(uuid)) {
+                response.send({
+                    response: "no-such-user"
+                });
+                return;
+            }
+            response.send({
+                response: "auth-success",
+                uuid: uuid,
+                username: whiteboardStorage.getUser(uuid).username
+            });
             break;
     }
 }

@@ -91,6 +91,7 @@ module.exports = {
         let uuid = uuidv4();
 
         // create local references
+        users[username] = {};
         users[username].uuid = uuid;
         users[username].username = username;
 

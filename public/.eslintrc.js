@@ -10,7 +10,8 @@ module.exports = {
         "sourceType": "module"
     },
     "globals": {
-        "io": {}
+        "io": {},
+        "Cookies": {}
     },
     "rules": {
         "indent": [
