@@ -77,10 +77,10 @@ module.exports = {
     },
 
     haveUser: function(username) {
-        if (!users[username]) {
-            return false;
+        if (users.hasOwnProperty(username)) {
+            return true;
         }
-        return true;
+        return false;
     },
     newUser: function(username) {
         if (this.haveUser(username)) {

@@ -60,11 +60,11 @@ let whiteboard = {
     loadWhiteboard: function(whiteboardContainer, newSettings) {
         let svgns = "http://www.w3.org/2000/svg";
         let _this = this;
-        for (let i in newSettings) {
-            this.settings[i] = newSettings[i];
+        for (let x in this.newSettings) {
+            this.settings[x] = newSettings[x];
         }
-        this.settings["username"] = this.settings["username"].replace(/[^0-9a-z]/gi, "");
-        this.settings["whiteboardId"] = this.settings["whiteboardId"].replace(/[^0-9a-z]/gi, "");
+        this.settings.username = this.settings.username.replace(/[^0-9a-z]/gi, "");
+        this.settings.whiteboardId = this.settings.whiteboardId.replace(/[^0-9a-z]/gi, "");
 
         let startCoords = [];
         let svgLine = null;
@@ -260,18 +260,22 @@ let whiteboard = {
                 if (_this.tool === "eraser") {
                     let left = currentCoords.x - _this.thickness;
                     let top = currentCoords.y - _this.thickness;
-                    _this.elements.ownCursor.css({
-                        "top": top + "px",
-                        "left": left + "px"
-                    });
+                    if (_this.elements.ownCursor) {
+                        _this.elements.ownCursor.css({
+                            "top": top + "px",
+                            "left": left + "px"
+                        });
+                    }
                 }
                 else if (_this.tool === "pen") {
                     let left = currentCoords.x - _this.thickness / 2;
                     let top = currentCoords.y - _this.thickness / 2;
-                    _this.elements.ownCursor.css({
-                        "top": top + "px",
-                        "left": left + "px"
-                    });
+                    if (_this.elements.ownCursor) {
+                        _this.elements.ownCursor.css({
+                            "top": top + "px",
+                            "left": left + "px"
+                        });
+                    }
                 }
                 else if (_this.tool === "line") {
                     if (svgLine) {

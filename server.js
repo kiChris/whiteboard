@@ -115,6 +115,18 @@ function processUser(formData, response) {
     var request = fields["request"];
 
     switch (request) {
+        case "gm-available":
+            if (whiteboardStorage.haveUser("game-master")) {
+                response.send({
+                    response: "unavailable"
+                });
+            }
+            else {
+                response.send({
+                    response: "available"
+                });
+            }
+            break;
         case "new-user":
             if (!username) {
                 response.send({

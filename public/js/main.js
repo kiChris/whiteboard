@@ -38,15 +38,17 @@ signaling_socket.on("connect", function() {
 
 // once page is loaded
 $(document).ready(function() {
+    let authInfo = Cookies.getJSON("whiteboard-auth");
+
     // if user is not logged in, redirect to login
-    if (!Cookies.get("whiteboard-username") || !Cookies.get("whiteboard-uuid")) {
+    if (!authInfo) {
         window.location.replace("/");
     }
 
     // load the whiteboard
     whiteboard.loadWhiteboard("#whiteboardContainer", {
         whiteboardId: whiteboardId,
-        username: Cookies.get("whiteboard-username"),
+        username: authInfo.username,
         sendFunction: function(content) {
             signaling_socket.emit("drawToWhiteboard", content);
         }
@@ -59,9 +61,9 @@ $(document).ready(function() {
         whiteboard.loadData(data);
     });
 
-    /*----------------/
-	Whiteboard actions
-    /----------------*/
+    /*-------------------\
+	  Whiteboard actions
+    \-------------------*/
 
     // whiteboard clear button
     $("#whiteboardTrashBtn").click(function() {
